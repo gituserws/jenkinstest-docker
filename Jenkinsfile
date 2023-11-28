@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+        'org.jenkinsci.plugins.docker.commons.tools.DockerTool' 'docker'
+    }
     stages {
         stage('Build') {
             steps {
@@ -27,9 +30,11 @@ pipeline {
             }
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
-                        app.push("${env.BUILD_NUMBER}")
-                        app.push("latest")
+                    docker.withTool('docker'){
+                        docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {                        
+                            app.push("${env.BUILD_NUMBER}")
+                            app.push("latest")
+                        }
                     }
                 }
             }
